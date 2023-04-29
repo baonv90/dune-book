@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
+import { VscChromeClose } from "react-icons/vsc";
 import { useFetchData } from "../helper/useFetchData.ts";
 import "./reading.css";
 
@@ -7,6 +9,14 @@ const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
+`;
+
+const CloseButton = styled(VscChromeClose)`
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  z-index: 10;
+  cursor: pointer;
 `;
 
 const Content = styled.div`
@@ -54,6 +64,9 @@ function Reading() {
 
   return (
     <PageWrapper>
+      <Link to="/">
+        <CloseButton />
+      </Link>
       <View chapter={chapter} />
       <Footer>
         <Button onClick={() => setChapter((old) => (old > 1 ? old - 1 : old))}>
