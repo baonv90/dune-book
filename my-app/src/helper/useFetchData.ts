@@ -27,7 +27,6 @@ export const useFetchData = (url) => {
           const endIndex = data.lastIndexOf(
             isMobile ? "mobile_chapter_navigator" : "navigator_bottom"
           );
-          console.log(startIndex, endIndex);
           setData(data.substring(startIndex, endIndex));
           setLoading(false);
         })
