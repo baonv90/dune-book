@@ -7,15 +7,7 @@
 }
 
 .ms_chapter {
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 25px;
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  padding: 16px 24px;
-  width: calc(100% - 48px);
-  opacity: 0.95;
+  display: none;
 }
 
 #dropcap{

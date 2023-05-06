@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { Link } from "react-router-dom";
 import { VscChromeClose } from "react-icons/vsc";
-import { MdModeNight } from "react-icons/md";
 import { useFetchData } from "../helper/useFetchData.ts";
 import "./reading.css";
 
@@ -13,29 +12,32 @@ const PageWrapper = styled.div`
   overflow-y: auto;
   font-size: ${({ fontSize }) => fontSize || FONTSIZE}px;
   line-height: ${({ fontSize }) => fontSize + 5 || FONTSIZE + 5}px;
-  background: ${({ mode }) => (mode === DARK_MODE ? "#232323" : "white")};
-  color: ${({ mode }) => (mode === DARK_MODE ? "white" : "black")};
+  color: ${({ theme }) => theme.colors.text};
+  background: ${({ theme }) => theme.colors.background};
+`;
+
+const HeaderContainer = styled.div`
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px;
+  align-items: center;
+  opacity: 0.95;
+  background: ${({ theme }) => theme.colors.white};
+  height: 40px;
+  width: calc(100% - 32px);
+`;
+
+const Title = styled.h2`
+  font-size: 20px;
+  line-height: 30px;
+  font-weight: 600;
 `;
 
 const CloseButton = styled(VscChromeClose)`
-  position: fixed;
-  color: ${({ mode }) => (mode === DARK_MODE ? "white" : "black")};
-  right: 16px;
-  top: 16px;
-  z-index: 1;
-  cursor: pointer;
-  width: 1.2rem;
-  height: 1.2rem;
-`;
-
-const DarkMode = styled(MdModeNight)`
-  z-index: 1;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  padding: 4px 8px;
-  background: #e3e3e3;
-  border-radius: 8px;
+  color: ${({ theme }) => theme.colors.title};
+  width: 22px;
+  height: 22px;
 `;
 
 const LoaderContent = styled.div`
@@ -48,7 +50,6 @@ const LoaderContent = styled.div`
 const Content = styled.div`
   padding: 70px 24px;
   font-family: sans-serif;
-  margin-bottom: 80px;
 `;
 
 const Footer = styled.div`
@@ -60,12 +61,13 @@ const Footer = styled.div`
   gap: 8px;
   padding: 8px 24px;
   justify-content: center;
-  background: ${({ mode }) => (mode === DARK_MODE ? "#232323" : "white")};
+  background: ${({ theme }) => theme.colors.white};
   opacity: 0.95;
 `;
 
 const Button = styled.button`
-  background: #e3e3e3;
+  background: ${({ theme }) => theme.colors.disabled};
+  color: ${({ theme }) => theme.colors.actionPrimary};
   border: none;
   border-radius: 8px;
   padding: 8px 16px;
@@ -73,7 +75,7 @@ const Button = styled.button`
 `;
 
 const Placeholder = styled.span`
-  background-color: #e3e3e3;
+  background-color: ${({ theme }) => theme.colors.disabled};
   display: block;
   border-radius: 4px;
   position: relative;
@@ -106,8 +108,6 @@ function Loader() {
 }
 
 const FONTSIZE = 18;
-const DARK_MODE = "dark";
-const LIGHT_MODE = "light";
 
 function Reading() {
   const [chapter, setChapter] = useState(
@@ -119,7 +119,6 @@ function Reading() {
   const [fontSize, setFontSize] = useState(
     parseInt(localStorage.getItem("fontSize")) || FONTSIZE
   );
-  const [mode, setMode] = useState(localStorage.getItem("mode") || LIGHT_MODE);
 
   useEffect(() => {
     function handleBeforeUnload() {
@@ -137,7 +136,6 @@ function Reading() {
     localStorage.setItem("chapter", chapter);
     localStorage.setItem("scrollPosition", scrollPosition);
     localStorage.setItem("fontSize", fontSize);
-    localStorage.setItem("mode", mode);
   };
 
   const handleScroll = (event) => {
@@ -145,12 +143,15 @@ function Reading() {
   };
 
   return (
-    <PageWrapper onScroll={handleScroll} fontSize={fontSize} mode={mode}>
-      <Link to="/">
-        <CloseButton mode={mode} onClick={saveLocalStorage} />
-      </Link>
+    <PageWrapper onScroll={handleScroll} fontSize={fontSize}>
+      <HeaderContainer>
+        <Title>{`Chapter ${chapter}`}</Title>
+        <Link to="/">
+          <CloseButton onClick={saveLocalStorage} />
+        </Link>
+      </HeaderContainer>
       <View chapter={chapter} />
-      <Footer mode={mode}>
+      <Footer>
         <Button onClick={() => setChapter((old) => (old > 1 ? old - 1 : old))}>
           Previous
         </Button>
@@ -160,11 +161,6 @@ function Reading() {
         >
           A-
         </Button>
-        <DarkMode
-          onClick={() =>
-            setMode((mode) => (mode === LIGHT_MODE ? DARK_MODE : LIGHT_MODE))
-          }
-        />
         <Button onClick={() => setChapter((old) => old + 1)}>Next</Button>
       </Footer>
     </PageWrapper>
